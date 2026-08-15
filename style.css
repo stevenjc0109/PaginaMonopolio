@@ -1,0 +1,269 @@
+:root {
+    /* Un fondo más oscuro para que resalte el tablero */
+    --bg-gradient: radial-gradient(circle at center, #2a5298 0%, #1e3c72 100%);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --primary: #2ecc71;
+    --danger: #e74c3c;
+    --text: #333;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    color: var(--text);
+    overflow-x: hidden; /* Evita scroll horizontal por el 3D */
+}
+
+.screen {
+    display: none;
+    min-height: 100vh;
+}
+
+.screen.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- Pantalla de Inicio --- */
+.setup-container {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.setup-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    letter-spacing: 2px;
+}
+
+.input-group, .players-setup {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.players-setup h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: transform 0.2s;
+    width: 100%;
+}
+
+.btn:active { transform: scale(0.98); }
+.btn.primary { background: var(--primary); color: white; }
+.btn.secondary { background: #3498db; color: white; margin-bottom: 10px; }
+.btn.danger { background: var(--danger); color: white; }
+.btn.success { background: var(--primary); color: white; }
+
+/* --- Pantalla de Juego --- */
+#game-screen {
+    padding: 40px 20px;
+    align-items: flex-start;
+}
+
+.game-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    gap: 50px;
+}
+
+/* --- MAGIA 3D DEL TABLERO --- */
+.board-container {
+    width: 100%;
+    max-width: 600px; /* Un poco más grande para lucir el 3D */
+    perspective: 1200px; /* Profundidad de la cámara */
+    margin-top: 20px;
+}
+
+.board-image {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Obliga a que siempre tenga forma cuadrada */
+    object-fit: cover; /* Hace que la imagen encaje bien sin deformarse */
+    display: block;
+    border-radius: 10px;
+    
+    /* Efecto de inclinación estilo "Mesa" */
+    transform: rotateX(45deg) rotateZ(-15deg);
+    transform-style: preserve-3d;
+    box-shadow: 
+        -20px 30px 40px rgba(0, 0, 0, 0.7), 
+        -5px 10px 15px rgba(0, 0, 0, 0.4);
+        
+    /* Borde para simular el cartón del tablero */
+    border: 8px solid #c9dfd1;
+    border-bottom: 15px solid #a3b8aa; 
+    border-left: 15px solid #a3b8aa;
+    transition: all 0.5s ease-out;
+}
+/* Efecto al pasar el mouse (se levanta un poco) */
+.board-container:hover .board-image {
+    transform: rotateX(35deg) rotateZ(-5deg) scale(1.05);
+    box-shadow: 
+        -10px 40px 50px rgba(0, 0, 0, 0.6), 
+        -5px 15px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Contenedor de Jugadores --- */
+.players-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.player-card {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    width: 160px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+}
+
+.player-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.3);
+    border-color: var(--primary);
+}
+
+.player-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #ecf0f1;
+    margin-bottom: 10px;
+    border: 3px solid #3498db;
+}
+
+.player-money {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #27ae60;
+    margin-top: 8px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* --- Modales --- */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px; right: 20px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #7f8c8d;
+    transition: color 0.2s;
+}
+
+.close-btn:hover { color: var(--danger); }
+
+.action-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.action-group {
+    display: flex;
+    gap: 10px;
+}
+
+.action-group input {
+    margin-bottom: 0;
+}
+
+.property-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.property-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 0.95rem;
+}
+
+.control-btn {
+    padding: 2px 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background: #3498db;
+    color: white;
+    font-weight: bold;
+}
+.control-btn:hover { background: #2980b9; }
